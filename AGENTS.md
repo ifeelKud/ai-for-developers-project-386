@@ -26,7 +26,14 @@ TypeSpec-спецификация `spec/booking.tsp` является **жёст
 ## Структура репозитория
 
 - **Корневая директория** — TypeSpec-спецификация API
+- **booking-api/** — Fastify бэкенд, реализующий API из TypeSpec
 - **booking-ui/** — React/Vite фронтенд, потребляющий сгенерированный OpenAPI
+
+## Порты
+
+- `booking-api/`: 3000
+- `booking-ui/`: 5173
+- Prism mock (опционально): 4010
 
 ## Команды
 
@@ -36,9 +43,17 @@ npm run compile   # Генерирует OpenAPI в tsp-output/
 npm run watch     # То же в режиме watch
 ```
 
+### booking-api/
+```bash
+npm run dev       # Запуск dev сервера (tsx watch)
+npm run build     # Компиляция TypeScript
+npm run start     # Запуск продакшен сервера
+npm run lint      # Линтинг
+```
+
 ### booking-ui/
 ```bash
-npm run dev                    # Vite (port 5173) + Prism mock (port 4010)
+npm run dev                    # Vite dev сервер (port 5173)
 npm run generate:types         # Регенерирует типы из tsp-output/@typespec/openapi3/openapi.yaml
 npm run build                  # Сборка
 npm run lint                   # Линтинг
@@ -47,9 +62,10 @@ npm run lint                   # Линтинг
 ## Порядок работы
 
 1. Изменить `spec/booking.tsp`
-2. `npm run compile` в корне
-3. `npm run generate:types` в booking-ui/
-4. Обновить код фронтенда при необходимости
+2. `npm run compile` в корне → генерирует OpenAPI в `tsp-output/`
+3. Обновить бэкенд и фронтенд по сгенерированному OpenAPI:
+   - **booking-api/**: адаптировать роуты согласно новому контракту
+   - **booking-ui/**: `npm run generate:types` для обновления типов
 
 ## CI
 
@@ -59,3 +75,4 @@ npm run lint                   # Линтинг
 
 - `tsp-output/` — сгенерированная директория, не коммитится (добавлена в .gitignore)
 - Типы фронтенда живут в `booking-ui/src/api/types.ts` — перезаписываются при `generate:types`
+- Бэкенд читает OpenAPI из `tsp-output/@typespec/openapi3/openapi.yaml` для валидации контракта
