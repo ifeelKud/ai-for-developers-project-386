@@ -22,6 +22,7 @@ export function EventDetailPage() {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [guestName, setGuestName] = useState('')
   const [guestEmail, setGuestEmail] = useState('')
+  const [error, setError] = useState<string>('')
 
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ['event', id],
@@ -55,7 +56,13 @@ export function EventDetailPage() {
   const createBookingMutation = useMutation({
     mutationFn: async (data: CreateBookingRequest) => {
       const res = await publicBookings.create(data)
-      return res.data
+      if (res.error && 'code' in res.error) {
+        throw new Error(res.error.message)
+      }
+      if (res.data && 'id' in res.data) {
+        return res.data
+      }
+      throw new Error('Unexpected response')
     },
     onSuccess: (data) => {
       if (data && 'id' in data) {
@@ -63,11 +70,15 @@ export function EventDetailPage() {
         navigate(`/bookings/${(data as Booking).id}`)
       }
     },
+    onError: (err: Error) => {
+      setError(err.message)
+    },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!id || !selectedSlot) return
+    setError('')
 
     createBookingMutation.mutate({
       eventTypeId: id,
@@ -127,7 +138,10 @@ export function EventDetailPage() {
                   <Button
                     key={idx}
                     variant={selectedSlot === slot ? 'default' : 'outline'}
-                    onClick={() => setSelectedSlot(slot)}
+                    onClick={() => {
+                      setSelectedSlot(slot)
+                      setError('')
+                    }}
                     className="justify-start"
                   >
                     {formatDateTime(slot.startTime)}
@@ -150,6 +164,11 @@ export function EventDetailPage() {
             <CardTitle className="text-lg">Your Information</CardTitle>
           </CardHeader>
           <CardContent>
+            {error && (
+              <div className="mb-4 p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                {error}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="guestName">Name</Label>
