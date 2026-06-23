@@ -119,6 +119,7 @@ export function AdminEventsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-events'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
       setIsCreating(false)
     },
   })
@@ -130,6 +131,7 @@ export function AdminEventsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-events'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
       setEditingEvent(null)
     },
   })
@@ -140,6 +142,7 @@ export function AdminEventsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-events'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
     },
   })
 
