@@ -32,6 +32,7 @@ export function EventsPage() {
       const res = await publicEvents.list()
       return res.data as EventType[]
     },
+    staleTime: 0,
   })
 
   if (isLoading) {
