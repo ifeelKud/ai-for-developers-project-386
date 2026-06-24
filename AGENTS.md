@@ -28,6 +28,7 @@ TypeSpec-спецификация `spec/booking.tsp` является **жёст
 - **Корневая директория** — TypeSpec-спецификация API
 - **booking-api/** — Fastify бэкенд, реализующий API из TypeSpec
 - **booking-ui/** — React/Vite фронтенд, потребляющий сгенерированный OpenAPI
+- **e2e/** — Playwright интеграционные тесты
 
 ## Порты
 
@@ -41,6 +42,9 @@ TypeSpec-спецификация `spec/booking.tsp` является **жёст
 ```bash
 npm run compile   # Генерирует OpenAPI в tsp-output/
 npm run watch     # То же в режиме watch
+npm run test:e2e          # Запуск e2e тестов (headless)
+npm run test:e2e:ui       # Запуск с UI mode (интерактивный)
+npm run test:e2e:headed   # Запуск в видимом браузере
 ```
 
 ### booking-api/
@@ -67,6 +71,35 @@ npm run lint                   # Линтинг
    - **booking-api/**: адаптировать роуты согласно новому контракту
    - **booking-ui/**: `npm run generate:types` для обновления типов
 
+## Тестирование
+
+### E2E тесты (Playwright)
+
+**Структура:**
+```
+e2e/
+├── playwright.config.ts   # Конфигурация Playwright (webServers, projects)
+├── helpers/
+│   ├── api.ts             # REST-клиент для API (createEventType, createBooking, etc.)
+│   └── date.ts            # Утилиты для работы с датами
+├── guest-booking.spec.ts  # E2E сценарии guest-пользователя
+└── edge-cases.spec.ts     # Граничные случаи API
+```
+
+**Основные сценарии:**
+- Создание → просмотр → отмена бронирования
+- Double booking → 409 SLOT_OCCUPIED
+- Бронирование за пределами 14 дней → 400 SLOT_OUTSIDE_WINDOW
+- Пустой guestName → 400 VALIDATION_ERROR
+- Несуществующий eventTypeId → 404 NOT_FOUND
+- Повторная отмена → 400 VALIDATION_ERROR
+
+**Добавление нового теста:**
+1. Определить тип: UI-тест (`page` parameter) или API-тест (только `helpers/api`)
+2. UI-тесты: добавить в `guest-booking.spec.ts`
+3. API-тесты: добавить в `edge-cases.spec.ts`
+4. Использовать `api.createEventType()` для создания тестовых данных
+
 ## CI
 
 `.github/workflows/hexlet-check.yml` — автогенерируется Hexlet, **не редактировать и не удалять**.
@@ -76,3 +109,4 @@ npm run lint                   # Линтинг
 - `tsp-output/` — сгенерированная директория, не коммитится (добавлена в .gitignore)
 - Типы фронтенда живут в `booking-ui/src/api/types.ts` — перезаписываются при `generate:types`
 - Бэкенд читает OpenAPI из `tsp-output/@typespec/openapi3/openapi.yaml` для валидации контракта
+- `e2e/node_modules/`, `e2e/test-results/`, `e2e/playwright-report/` — не коммитятся
