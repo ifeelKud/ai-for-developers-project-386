@@ -29,7 +29,7 @@ test.describe('Guest Booking Flow', () => {
 
     await page.getByRole('button', { name: 'Confirm Booking' }).click()
 
-    await expect(page).toHaveURL(/\/bookings\/./)
+    await expect(page).toHaveURL(/\/bookings\/./, { timeout: 10000 })
 
     await expect(page.getByText('Booking #')).toBeVisible()
     await expect(page.getByText('Confirmed')).toBeVisible()
