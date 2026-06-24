@@ -31,9 +31,7 @@ jobs:
         run: cd e2e && npm ci
 
       - name: Install Playwright
-        uses: microsoft/playwright@v1
-        with:
-          browsers: chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
         run: npm run test:e2e
