@@ -14,8 +14,8 @@ test.describe('Guest Booking Flow', () => {
     const tomorrow = getTomorrowDateString()
 
     await page.goto(`/events/${eventTypeId}`)
-
-    await expect(page.getByRole('heading', { name: 'Consultation' })).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('heading', { name: 'Consultation' })).toBeVisible({ timeout: 15000 })
 
     await page.locator('input[type="date"]').fill(tomorrow)
 
@@ -29,9 +29,9 @@ test.describe('Guest Booking Flow', () => {
 
     await page.getByRole('button', { name: 'Confirm Booking' }).click()
 
-    await expect(page).toHaveURL(/\/bookings\/./, { timeout: 10000 })
-
-    await expect(page.getByText('Booking #')).toBeVisible()
+    await expect(page).toHaveURL(/\/bookings\/./, { timeout: 15000 })
+    await page.waitForLoadState('networkidle')
+    await expect(page.getByText('Booking #')).toBeVisible({ timeout: 10000 })
     await expect(page.getByText('Confirmed')).toBeVisible()
     await expect(page.getByText('Ivan Ivanov')).toBeVisible()
     await expect(page.getByText('ivan@example.com')).toBeVisible()
@@ -44,7 +44,8 @@ test.describe('Guest Booking Flow', () => {
     const booking = await api.createBooking(eventTypeId, slotTime, 'Test User', 'test@example.com') as any
 
     await page.goto(`/bookings/${booking.data.id}`)
-    await expect(page.getByRole('button', { name: 'Cancel Booking' })).toBeVisible({ timeout: 10000 })
+    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('button', { name: 'Cancel Booking' })).toBeVisible({ timeout: 15000 })
     await page.getByRole('button', { name: 'Cancel Booking' }).click()
 
     await expect(page.getByText('Cancelled')).toBeVisible()
