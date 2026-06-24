@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "compile": "tsp compile spec/booking.tsp --emit @typespec/openapi3",
-    "watch": "tsp compile spec/booking.tsp --emit @typespec/openapi3 --watch"
+    "watch": "tsp compile spec/booking.tsp --emit @typespec/openapi3 --watch",
+    "test:e2e": "cd e2e && npx playwright test",
+    "test:e2e:ui": "cd e2e && npx playwright test --ui",
+    "test:e2e:headed": "cd e2e && npx playwright test --headed"
   },
   "dependencies": {},
   "devDependencies": {
