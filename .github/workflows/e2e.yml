@@ -25,7 +25,7 @@ jobs:
         run: cd booking-api && npm ci
 
       - name: Install UI dependencies
-        run: cd booking-ui && npm ci
+        run: cd booking-ui && npm ci --legacy-peer-deps
 
       - name: Install e2e dependencies
         run: cd e2e && npm ci
