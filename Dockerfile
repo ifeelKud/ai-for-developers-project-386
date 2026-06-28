@@ -32,8 +32,7 @@ COPY --from=backend-builder /app/booking-api/package.json ./booking-api/package.
 COPY --from=frontend-builder /app/booking-ui/dist ./booking-ui/dist
 
 ENV NODE_ENV=production
-ENV PORT=3000
-EXPOSE ${PORT}
+EXPOSE 8080
 
 WORKDIR /app/booking-api
 CMD ["node", "dist/index.js"]
